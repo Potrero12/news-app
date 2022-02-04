@@ -79,15 +79,44 @@ export class ArticleComponent implements OnInit {
 
   shareArticle(){
 
-    const {  title, source, url } = this.article;
+    // const {  title, source, url } = this.article;
 
     console.log('Compartiendo');
-    this.socialSharing.share(
-      title,
-      source.name,
-      null,
-      url
-    );
+    this.compartirArticulo();
+    // this.socialSharing.share(
+    //   title,
+    //   source.name,
+    //   null,
+    //   url
+    // );
+  }
+
+  compartirArticulo(){
+
+    const {  title, source, url, description } = this.article;
+
+    if(this.plaform.is('cordova')) {
+
+        this.socialSharing.share(
+        title,
+        source.name,
+        null,
+        url
+      );
+    } else {
+      if (navigator.share) {
+        navigator.share({
+          title,
+          text: description,
+          url
+        })
+          .then(() => console.log('Successful share'))
+          .catch((error) => console.log('Error sharing', error));
+      } else {
+        console.log('no se pudo compartir porque no soporta')
+      }
+    }
+
   }
 
   onToggleFavorite(){

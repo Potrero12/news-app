@@ -6,7 +6,9 @@ import { Observable, of } from 'rxjs';
 
 import { RespuestaTopHeadlines, Article, ArticleByCategoryAndPage } from '../interfaces/index';
 
-import { map } from 'rxjs/operators'
+import { map } from 'rxjs/operators';
+import { storedArticlesByCategory } from '../data/mock-news';
+
 
 const apiKey = environment.api_key;
 const apiUrl = environment.apiUrl;
@@ -16,7 +18,7 @@ const apiUrl = environment.apiUrl;
 })
 export class NewsService {
 
-  private ArticleByCategoryAndPage: ArticleByCategoryAndPage = {};
+  private ArticleByCategoryAndPage: ArticleByCategoryAndPage = storedArticlesByCategory;
 
   constructor(
     private http: HttpClient
@@ -44,6 +46,8 @@ export class NewsService {
 
   getTopHeadLinesCategory( category: string, loadMore: boolean = false ):Observable<Article[]> {
 
+    return of(this.ArticleByCategoryAndPage[category].articles);
+
     if ( loadMore ) {
       return this.getArticlesByCategory( category );
     }
@@ -58,8 +62,6 @@ export class NewsService {
 
   //metodo para evitar llamar la peticion cada ves que entramos a un tab, page que ya conoscamos
   private getArticlesByCategory( category: string ): Observable<Article[]> {
-
- 
 
     if ( Object.keys( this.ArticleByCategoryAndPage ).includes(category) ) {
       // Ya existe
